@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+ 
+
+```{r}
+data <- read.csv('../Downloads/Student Content/DATA/gapminder.csv')
+head(data)
+```
+
+#Exercise 1: Filtering rows based on conditions
+## Create a new variable called small_countries that contains records for countries with population less than 1 000 000.
+### HINT: you should get 3830 records.
+
+
+```{r}
+# filtering new cols
+small_countries <- subset(data, data$population < 1000000)
+head(small_countries)
+```
+
+# Exercise 2: Filtering rows based on conditions and sorting
+## List the countries for which gdp_per_capita in 2011 was over 60000, sorted by gdp_per_capita.
+### HINT: you should get 6 records.
+
+
+```{r}
+gdp_per_capita_filter <- subset(data, year == 2011 & gdp_per_capita > 60000)
+gdp_per_capita_filter <- gdp_per_capita_filter[order(gdp_per_capita_filter$gdp_per_capita), ]
+head(gdp_per_capita_filter)
+```
+
+
+#Exercise 3: Filtering rows based on conditions and identifying distinct values
+## 1. Create a variable called europe_82 which contains all the data for Europe where life expectancy is over 82.
+## 2. List all the countries that can be found in this subset (there should be 7).
+## 3. Provide the code to check your result
+
+
+```{r}
+europe_82 <- subset(data, region == 'Europe' & data$life_expectancy >= 82)
+head(europe_82)
+
+```
+
+#Exercise 4: Filtering rows based on conditions, filtering columns, and identifying distinct values
+## 1. Create a variable asia_82 that contains the following fields: year, country, gdp_per_capita, life_expectancy for all the countries in Asia region where life expectancy is over 82 that refer to years 2014 and later.
+## 2. List all the countries that can be found in this subset (there should be 3).
+
+```{r}
+asia_82 <- subset(data, region == 'Asia' & life_expectancy >= 82 & year >= 2014 & gdp_per_capita)
+print(asia_82)
+```
+
+
+```{r}
+#Corrected
+asia_82 <- subset(data, region == "Asia" & life_expectancy > 82 & year >= 2014,
+                  select = c(year, country, gdp_per_capita, life_expectancy))
+print(asia_82)
+
+```
+
+```{r}
+unique_countries <- unique(asia_82$country)
+print(unique_countries)
+
+```
+

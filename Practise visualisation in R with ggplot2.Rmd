@@ -1,0 +1,182 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+data <- read.csv('../DATA/cdc.csv')
+print(data)
+```
+
+# Exercise 1: Prepare the data
+## Read the data from file cdc.csv. Review the data types. For categorical binary variables, change 0-1 to “no”-“yes”.
+## Split the data set into data for males and data for females.
+
+
+```{r}
+#For the smokers
+data$smoke100 <- ifelse(data$smoke100 == 1, "yes", "no")
+
+#For the exerany
+data$exerany <- ifelse(data$exerany == 1, "yes", "no")
+
+
+#For the hlthplan
+data$hlthplan <- ifelse(data$hlthplan == 1, "yes", "no")
+
+
+head(data[, c("smoke100", "exerany", "hlthplan")])
+
+head(data)
+
+```
+
+```{r}
+males <- data[data$gender == 'm',]
+
+```
+
+```{r}
+print(males)
+```
+
+```{r}
+females <- data[data$gender == 'f',]
+```
+```{r}
+print(females)
+```
+
+#🧪 Exercise 2: Scatterplots
+## 1. Create a scatterplot for male heights and weights.
+## 2. On the same scatterplot, use different colours to represent the general state of health of the individuals.
+##3. On the same scatterplot, represent smokers and non-smokers by different shape points.
+
+```{r}
+library(ggplot2)
+
+males <- data[data$gender == 'm',]
+
+# Create scatterplot
+ggplot(data = males, aes(x = weight, y = height)) +
+  geom_point() +
+  labs(
+    title = "Male Height vs Weight",
+    x = "Weight (lbs)",
+    y = "Height (inches)",
+  )
+
+```
+
+
+```{r}
+ggplot(data = males, aes(x = weight, y = height, color = genhlth)) +
+  geom_point() +
+  labs(title = "Male Height vs Weight by General Health")
+
+```
+
+```{r}
+
+# Create scatterplot
+ggplot(data = males, aes(x = weight, y = height, color = genhlth, shape = smoke100)) +
+  geom_point() +
+  labs(
+    title = "Male Height vs Weight",
+    x = "Weight (lbs)",
+    y = "Height (inches)",
+    color = "General Health",
+    shape = "Smoker Status"
+  )
+
+```
+
+
+
+# Exercise 3: Working with categorical variables - facets
+## 2. Create a scatterplot for heights and weights for people of each state (level) of general health and each gender.
+
+
+# Exercise 3: Working with categorical variables – facets
+##1. Create a scatterplot for male heights and weights for people of each state (level) of general health.
+
+```{r}
+ggplot(data = males, aes(x = weight, y = height)) +
+  geom_point() +
+  facet_wrap(~ genhlth) +
+  labs(title = "Male Height vs Weight by General Health")
+
+```
+#2. Create a scatterplot for heights and weights for people of each state of general health and each gender.
+```{r}
+ggplot(data = males, aes(x = weight, y = height)) +
+  geom_point() +
+  facet_wrap(~ genhlth + gender) +
+  labs(title = "Male Height vs Weight by General Health by Gender")
+```
+
+#🧪 Exercise 4: Line plots
+## 1. Create a line plot for male heights and weights.
+```{r}
+data_male_ordered <- males[order(data$weight), ]
+
+ggplot(data_male_ordered, aes(x = weight, y = height)) +
+  geom_line() +
+  labs(title = "Line Plot: Male Height vs Weight")
+
+```
+
+
+# 2. Create line plots for male heights and weights and female heights and weights on the same coordinate system.
+
+```{r}
+females <- data[data$gender == 'f',]
+
+males <- data[data$gender == 'm',]
+
+data_male_ordered <- males[order(data$weight), ]
+data_female_ordered <- females[order(data$weight), ]
+
+
+data_female_ordered$group <- "f"
+data_male_ordered$group <- "m"
+
+data_combined <- rbind(data_male_ordered, data_female_ordered)
+
+ggplot(data_combined, aes(x = weight, y = height, color = group)) +
+  geom_line() +
+  labs(title = "Line Plot: Height vs Weight by Gender")
+
+```
+
+
+#Exercise 5: Bar plots
+##1. Create a bar plot showing the number of people of each state (level) of general health (both men and women).
+
+
+
+```{r}
+ggplot(data, aes(x = genhlth)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Count of People by General Health")
+
+```
+
+#2. Create a bar plot showing the number of people of each state of general health as a percentage split between men and women.
+```{r}
+ggplot(data, aes(x = genhlth, fill = gender)) +
+  geom_bar(position = "fill") +  # fill gives proportions
+  labs(title = "Proportion of General Health by Gender", y = "Proportion") +
+  scale_y_continuous(labels = scales::percent)
+
+```
+
+
+
+
+
+
+
+
+
